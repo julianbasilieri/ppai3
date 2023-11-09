@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "respuestasPosibles")
+@Table(name = "respuestas_posibles")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RespuestaPosible {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @TableGenerator(name = "respuestasPosibles", table = "sqlite_sequence",
+    @TableGenerator(name = "respuestas_posibles", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "respuesta_posible_id")
     private String descipcion;
     private int valor;

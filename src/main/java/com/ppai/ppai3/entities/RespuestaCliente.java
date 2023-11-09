@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Entity
-@Table(name = "respuestasCliente")
+@Table(name = "respuestas_cliente")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RespuestaCliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @TableGenerator(name = "respuestasCliente", table = "sqlite_sequence",
+    @TableGenerator(name = "respuestas_cliente", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "respuesta_cliente_id")
     @Column(name = "fecha_encuesta")
     private Date fechaEncuesta;
