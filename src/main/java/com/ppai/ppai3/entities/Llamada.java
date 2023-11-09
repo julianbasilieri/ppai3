@@ -27,7 +27,7 @@ public class Llamada {
     @OneToMany(mappedBy = "llamada")
     private List<RespuestaCliente> respuestasCliente;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "dni_cliente")
     private Cliente cliente;
     @OneToMany(mappedBy = "llamada")
     private List<CambioEstado> cambiosEstado;

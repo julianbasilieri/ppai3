@@ -15,7 +15,7 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableGenerator(name = "clientes", table = "sqlite_sequence",
-            pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "cliente_id")
+            pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "dni")
     private int dni;
     @Column(name = "nombre_completo")
     private String nombreCompleto;
