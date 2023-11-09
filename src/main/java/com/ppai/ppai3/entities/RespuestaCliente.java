@@ -16,6 +16,7 @@ public class RespuestaCliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableGenerator(name = "respuestasCliente", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "respuesta_cliente_id")
+    @Column(name = "fecha_encuesta")
     private Date fechaEncuesta;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "respuesta_posible_id")

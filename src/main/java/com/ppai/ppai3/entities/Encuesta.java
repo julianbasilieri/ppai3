@@ -19,6 +19,7 @@ public class Encuesta {
     @TableGenerator(name = "encuestas", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "encuesta_id")
     private String descipcion;
+    @Column(name = "fecha_fin_vigencia")
     private Date fechaFinVigencia;
     @OneToMany(mappedBy = "encuesta")
     private List<Pregunta> preguntas;

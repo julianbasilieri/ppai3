@@ -18,7 +18,8 @@ public class CambioEstado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableGenerator(name = "cambios_estado", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "cambio_estado_id")
-    private LocalDateTime fechahoraInicio;
+    @Column(name = "fecha_hora_inicio")
+    private LocalDateTime fechaHoraInicio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "estado_id")
     private Estado estado;
