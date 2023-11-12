@@ -1,0 +1,144 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.botonConsultar {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 15px; /* Ajusta el tamaño del botón Consultar Encuesta */
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 20px; /* Ajusta el tamaño de la letra */
+    font-weight: bold; /* Ajusta el grosor de la letra */
+}
+
+.botonConsultar:hover {
+    background-color: #2980b9;
+}
+
+.boton {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Ajusta el tamaño de la letra */
+    font-weight: bold; /* Ajusta el grosor de la letra */
+}
+
+.boton:hover {
+    background-color: #2980b9;
+}
+
+/* index.css */
+
+#fechaInputs {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 0; /* Ajuste de margen superior predeterminado */
+}
+
+#fechaInputs.conMargen {
+    margin-top: 20px; /* Nuevo margen superior con clase 'conMargen' */
+}
+
+
+.sinDatosMensaje {
+    display: none;
+    color: red;
+    margin-bottom: 20px;
+    font-size: 18px; /* Ajusta el tamaño de la letra */
+    font-weight: bold; /* Ajusta el grosor de la letra */
+}
+
+#mensajeError {
+    color: red;
+    margin-bottom: 20px;
+    font-size: 18px; /* Ajusta el tamaño de la letra */
+    font-weight: bold; /* Ajusta el grosor de la letra */
+}
+
+#fechaInputs {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.llamadaButton {
+    margin: 5px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.llamadaButton:hover {
+    background-color: #2980b9;
+}
+
+#llamadasContainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#detallesLlamada {
+    display: none;
+    margin-top: 20px;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+#botones {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+}
+

@@ -1,5 +1,6 @@
 package com.ppai.ppai3.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,9 +16,16 @@ public class RespuestaPosible {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableGenerator(name = "respuestasPosibles", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "respuesta_posible_id")
-    private String descipcion;
+    @Column(name = "respuesta_posible_id")
+    private int respuestaPosibleId;
+    private String descripcion;
     private int valor;
     @ManyToOne
     @JoinColumn(name = "pregunta_id")
+    @JsonIgnore
     private Pregunta pregunta;
+
+    public String getDescripcionRta() {
+        return getPregunta().getDescripcion();
+    }
 }

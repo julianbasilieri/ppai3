@@ -16,5 +16,7 @@ public class Estado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableGenerator(name = "estados", table = "sqlite_sequence",
             pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "estado_id")
+    @Column(name = "estado_id")
+    private int estadoId;
     private String nombre;
 }

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Encuesta</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+    <button id="btnConsultar" class="botonConsultar" onclick="limpiarMensajes(); mostrarInputs()">Consultar
+        Encuesta</button>
+
+    <div id="fechaInputs" style="display: none;">
+        <div>
+            <label for="fechaInicio">Fecha de Inicio:</label>
+            <input type="date" id="fechaInicio" required>
+        </div>
+        <div>
+            <label for="fechaFin">Fecha de Fin:</label>
+            <input type="date" id="fechaFin" required>
+        </div>
+        <div>
+            <button onclick="consultarApi()" class="botonConsultar">Consultar</button>
+        </div>
+        <p id="mensajeError" class="mensajeError"></p>
+    </div>
+
+    <div id="sinDatosMensaje" class="sinDatosMensaje">No hay datos disponibles para el período seleccionado.</div>
+
+    <div id="llamadasContainer"></div>
+
+    <div id="detallesLlamada">
+        <h2>Resultado de la consulta:</h2>
+        <table id="detalleTabla">
+            <tr>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Duración</th>
+            </tr>
+        </table>
+
+        <h2>Datos de la encuesta del cliente:</h2>
+        <table id="encuestaTabla">
+            <tr>
+                <th>Encuesta</th>
+                <th>Pregunta</th>
+                <th>Respuesta</th>
+            </tr>
+        </table>
+
+        <div id="botones">
+            <button id="csvButton" onclick="exportarCSV()" class="boton">CSV</button>
+            <button id="imprimirButton" onclick="imprimirDetalles()" disabled class="boton">Imprimir</button>
+        </div>
+    </div>
+
+    <script>
+        function limpiarMensajes() {
+            document.getElementById("mensajeError").innerText = "";
+            document.getElementById("sinDatosMensaje").style.display = "none";
+        }
+
+        function mostrarInputs() {
+            document.getElementById("btnConsultar").style.display = "none";
+            document.getElementById("fechaInputs").style.display = "flex";
+            document.getElementById("detallesLlamada").style.display = "none"; // Ocultar detalles si se vuelven a elegir fechas
+            document.getElementById("sinDatosMensaje").style.display = "none"; // Ocultar mensaje de sin datos
+        }
+
+        function consultarApi() {
+            limpiarMensajes();
+            const fechaInicio = document.getElementById("fechaInicio").value;
+            const fechaFin = document.getElementById("fechaFin").value;
+
+            if (validarFechas(fechaInicio, fechaFin)) {
+                const apiUrl = `http://localhost:8080/api/llamada/selec?fi=${fechaInicio}&ff=${fechaFin}`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => mostrarLlamadas(data))
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function validarFechas(fechaInicio, fechaFin) {
+            if (fechaInicio > fechaFin) {
+                document.getElementById("mensajeError").innerText = "La fecha de fin debe ser igual o posterior a la fecha de inicio.";
+                return false;
+            } else {
+                document.getElementById("mensajeError").innerText = "";
+                return true;
+            }
+        }
+
+        function mostrarLlamadas(llamadas) {
+            const llamadasContainer = document.getElementById("llamadasContainer");
+            const sinDatosMensaje = document.getElementById("sinDatosMensaje");
+
+            if (llamadas.length === 0) {
+                // No hay datos para mostrar
+                sinDatosMensaje.style.display = "block";
+                llamadasContainer.innerHTML = ""; // Limpiar cualquier contenido anterior
+                document.getElementById("detallesLlamada").style.display = "none"; // Ocultar detalles
+            } else {
+                sinDatosMensaje.style.display = "none";
+                llamadasContainer.innerHTML = ""; // Limpiar cualquier contenido anterior
+
+                llamadas.forEach(llamada => {
+                    const llamadaButton = document.createElement("button");
+                    llamadaButton.className = "llamadaButton";
+                    llamadaButton.innerText = `ID de llamada: ${llamada.llamadaId}`;
+                    llamadaButton.onclick = () => mostrarDetallesLlamada(llamada);
+                    llamadasContainer.appendChild(llamadaButton);
+                });
+            }
+        }
+
+        function mostrarDetallesLlamada(llamada) {
+            // Ocultar botones de llamada
+            document.getElementById("llamadasContainer").style.display = "none";
+
+            // Mostrar detalles de la llamada en formato de tabla
+            const detalleTabla = document.getElementById("detalleTabla");
+            const encuestaTabla = document.getElementById("encuestaTabla");
+
+            // Agregar o quitar la clase 'conMargen' según sea necesario
+            const fechaInputs = document.getElementById("fechaInputs");
+            fechaInputs.classList.add("conMargen");
+
+            // Limpiar tablas anteriores
+            detalleTabla.innerHTML = "<tr><th>Cliente</th><th>Estado</th><th>Duración</th></tr>";
+            encuestaTabla.innerHTML = "<tr><th>Encuesta</th><th>Pregunta</th><th>Respuesta</th></tr>";
+
+            // Agregar datos de la llamada a la tabla de detalles
+            const detalleRow = detalleTabla.insertRow();
+            detalleRow.insertCell(0).innerText = llamada.cliente;
+            detalleRow.insertCell(1).innerText = llamada.estado;
+            detalleRow.insertCell(2).innerText = llamada.duracion + "segundos";
+
+            // Agregar datos de la encuesta a la tabla de encuesta
+            llamada.respuestasCliente.forEach(respuesta => {
+                const encuestaRow = encuestaTabla.insertRow();
+                encuestaRow.insertCell(0).innerText = respuesta.descripcionEncuesta;
+                encuestaRow.insertCell(1).innerText = respuesta.descripcionPregunta;
+                encuestaRow.insertCell(2).innerText = respuesta.descripcionRespuesta;
+            });
+
+            // Mostrar la sección de detalles de la llamada
+            document.getElementById("detallesLlamada").style.display = "block";
+
+            // Agregar un margen superior constante a #fechaInputs
+            document.getElementById("fechaInputs").style.marginTop = "20px";
+
+            // Habilitar el botón de imprimir
+            document.getElementById("imprimirButton").disabled = false;
+        }
+
+        function exportarCSV() {
+            fetch('http://localhost:8080/api/exportar-csv')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'mi_archivo.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+
+        function imprimirDetalles() {
+            // Implementar lógica para imprimir detalles aquí
+            alert("Función de imprimir aún no implementada.");
+        }
+    </script>
+
+</body>
+
+</html>

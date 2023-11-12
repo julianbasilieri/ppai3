@@ -2,17 +2,19 @@ package com.ppai.ppai3.entities;
 
 import com.ppai.ppai3.interfaces.IIterador;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 public class IteradorLlamada implements IIterador {
     private int actual;
-    private Date fechaIncio;
-    private Date fechaFin;
+    private LocalDate fechaIncio;
+    private LocalDate fechaFin;
     private List<Llamada> llamadas;
     @Override
     public void primero() {
-        actual = 1;
+        actual = 0;
     }
 
     @Override
@@ -26,19 +28,17 @@ public class IteradorLlamada implements IIterador {
     }
 
     @Override
-    public Object actual() {
+    public Llamada actual() {
         return llamadas.get(actual);
     }
 
     @Override
-    public boolean cumpleFiltros(Date fechaInicioPeriodo, Date fechaFinPerido, Date fechaCambioEstado) {
-        return false;
+    public boolean cumpleFiltros(LocalDate fechaInicioPeriodo, LocalDate fechaFinPerido, Llamada llamada) {
+        return (llamada.esDePeriodo(fechaInicioPeriodo, fechaFinPerido) && llamada.tieneRespuestas());
     }
 
-    public IteradorLlamada(List<Llamada> llamadas, Date fechaIncio, Date fechaFin) {
+    public IteradorLlamada(List<Llamada> llamadas) {
         this.actual = 0;
-        this.fechaIncio = fechaIncio;
-        this.fechaFin = fechaFin;
         this.llamadas = llamadas;
     }
 }

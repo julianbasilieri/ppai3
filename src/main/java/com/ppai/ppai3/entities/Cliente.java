@@ -20,5 +20,5 @@ public class Cliente {
     @Column(name = "nombre_completo")
     private String nombreCompleto;
     @Column(name = "nro_celular")
-    private int nroCelular;
+    private String nroCelular;
 }
