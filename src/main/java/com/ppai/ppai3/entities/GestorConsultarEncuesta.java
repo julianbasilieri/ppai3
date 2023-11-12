@@ -1,14 +1,17 @@
 package com.ppai.ppai3.entities;
 
 import com.opencsv.CSVWriter;
+import com.ppai.ppai3.entities.dtos.LlamadaPeriodoRespuesta;
+import com.ppai.ppai3.entities.dtos.RespuestaClientePeriodoRespuesta;
 import com.ppai.ppai3.interfaces.IAgregado;
 import com.ppai.ppai3.interfaces.IIterador;
+import com.ppai.ppai3.services.transformations.Llamada.LlamadaDtoPeriodoRespuestaMapper;
 import org.springframework.stereotype.Controller;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -31,15 +34,15 @@ public class GestorConsultarEncuesta implements IAgregado {
         fechaInicio = fechaIni;
         fechaFin = fechaF;
     }
-    public List<Llamada> buscarLlamadasConEncuestaRespondida(List<Llamada> llamadas) {
+    public List<Integer> buscarLlamadasConEncuestaRespondida(List<Llamada> llamadas) {
         this.llamadas = llamadas;
-        List<Llamada> llamadasConEncuestaRespodida = new ArrayList<>();
+        List<Integer> llamadasConEncuestaRespodida = new ArrayList<>();
         final IteradorLlamada iterador = (IteradorLlamada) crearIterador(Collections.singletonList(llamadas));
         iterador.primero();
         while (!iterador.haTerminado()) {
             iterador.actual();
             if (iterador.cumpleFiltros(fechaInicio, fechaFin, iterador.actual())) {
-                llamadasConEncuestaRespodida.add(iterador.actual());
+                llamadasConEncuestaRespodida.add(iterador.actual().getLlamadaId());
             }
             iterador.siguiente();
         }
@@ -51,6 +54,10 @@ public class GestorConsultarEncuesta implements IAgregado {
     }
     public void tomarSeleccionLlamada(Llamada llamada) {
         llamadaSeleccionada = llamada;
+        buscarClienteDeLlamada();
+        buscarUltimoEstado();
+        buscarDuracion();
+        buscarDatosRespuestaCliente();
     }
     public void buscarClienteDeLlamada() {
         cliente = llamadaSeleccionada.getNombreClienteDeLlamada();
@@ -66,12 +73,20 @@ public class GestorConsultarEncuesta implements IAgregado {
     }
     public void tomarSeleccionFormaGeneracionEncuesta(String fg) {
         formaGeneracion = fg;
+        generarConsultaEncuesta();
     }
     public void generarConsultaEncuesta() {
+        LlamadaDtoPeriodoRespuestaMapper llamadaDtoPeriodoRespuestaMapper = new LlamadaDtoPeriodoRespuestaMapper();
+        LlamadaPeriodoRespuesta llamadaPeriodoRespuesta = llamadaDtoPeriodoRespuestaMapper.apply(llamadaSeleccionada);
         String escritorio = System.getProperty("user.home") + "/Desktop/";
 
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String timestamp = dateFormat.format(new Date());
+
+
         // Concatenar el nombre del archivo CSV a la ruta del escritorio
-        String rutaArchivo = escritorio + "mi_archivo.csv";
+        String rutaArchivo = escritorio + "mi_archivo_" + timestamp + ".csv";
 
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(rutaArchivo))) {
             // Cabeceras del archivo CSV
@@ -81,26 +96,23 @@ public class GestorConsultarEncuesta implements IAgregado {
 
             // Datos de la llamada seleccionada
             String[] datosLlamada = {cliente, ultimoEstado, String.valueOf(duracion)};
+            csvWriter.writeNext(datosLlamada);
 
-//            // Iterar sobre las respuestas del cliente y obtener la información necesaria
-//            for (Encuesta encuesta : respuestasCliente) {
-//                for (Pregunta pregunta : encuesta.getPreguntas()) {
-//                    for (RespuestaPosible respuestaPosible : pregunta.getRespuestasPosibles()) {
-//                        // Agregar los datos al archivo CSV
-//                        String[] datos = {cliente, ultimoEstado, String.valueOf(duracion),
-//                                encuesta.getDescripcion(), pregunta.getPregunta(), respuestaPosible.getDescripcion()};
-//                        csvWriter.writeNext(datos);
-//                    }
-//                }
-//            }
+            for (RespuestaClientePeriodoRespuesta respuestaCliente : llamadaPeriodoRespuesta.getRespuestasCliente()) {
+                String[] datos = {respuestaCliente.getDescripcionEncuesta(), respuestaCliente.getDescripcionPregunta(), respuestaCliente.getDescripcionRespuesta()};
+                csvWriter.writeNext(datos);
+            }
 
             System.out.println("Archivo CSV generado exitosamente.");
         } catch (IOException e) {
             e.printStackTrace();
             // Manejar la excepción según sea necesario
         }
+        finCU();
     }
 
-    public void finCU() {}
+    public void finCU() {
+        System.out.println("Fin del CU");
+    }
 
 }

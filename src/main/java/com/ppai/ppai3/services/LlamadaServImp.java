@@ -7,7 +7,6 @@ import com.ppai.ppai3.entities.dtos.LlamadaPeriodoRespuesta;
 import com.ppai.ppai3.repositories.LlamadaRepository;
 import com.ppai.ppai3.services.transformations.Llamada.LlamadaDtoMapper;
 import com.ppai.ppai3.services.transformations.Llamada.LlamadaDtoPeriodoRespuestaMapper;
-import com.ppai.ppai3.services.transformations.Llamada.LlamadaMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,14 +17,12 @@ import java.util.Optional;
 public class LlamadaServImp implements LlamadaServ {
     private final LlamadaRepository llamadaRepository;
     private final LlamadaDtoMapper llamadaDtoMapper;
-    private final LlamadaMapper llamadaMapper;
     private final LlamadaDtoPeriodoRespuestaMapper llamadaDtoPeriodoRespuestaMapper;
     private final GestorConsultarEncuesta gestorConsultarEncuesta;
 
-    public LlamadaServImp(LlamadaRepository llamadaRepository, LlamadaDtoMapper llamadaDtoMapper, LlamadaMapper llamadaMapper, LlamadaDtoPeriodoRespuestaMapper llamadaDtoPeriodoRespuestaMapper, GestorConsultarEncuesta gestorConsultarEncuesta) {
+    public LlamadaServImp(LlamadaRepository llamadaRepository, LlamadaDtoMapper llamadaDtoMapper, LlamadaDtoPeriodoRespuestaMapper llamadaDtoPeriodoRespuestaMapper, GestorConsultarEncuesta gestorConsultarEncuesta) {
         this.llamadaRepository = llamadaRepository;
         this.llamadaDtoMapper = llamadaDtoMapper;
-        this.llamadaMapper = llamadaMapper;
         this.llamadaDtoPeriodoRespuestaMapper = llamadaDtoPeriodoRespuestaMapper;
         this.gestorConsultarEncuesta = gestorConsultarEncuesta;
     }
@@ -40,27 +37,21 @@ public class LlamadaServImp implements LlamadaServ {
     }
 
     @Override
-    public LlamadaDto getById(Integer id) {
-        Optional<Llamada> llamada = llamadaRepository.findById(id);
-        return llamada
-                .map(llamadaDtoMapper)
+    public LlamadaPeriodoRespuesta getById(Integer id) {
+        Optional<Llamada> llamadaOptional = llamadaRepository.findById(id);
+        llamadaOptional.ifPresent(gestorConsultarEncuesta::tomarSeleccionLlamada);
+        return llamadaOptional
+                .map(llamadaDtoPeriodoRespuestaMapper)
                 .orElseThrow();
     }
     @Override
-    public List<LlamadaPeriodoRespuesta> getByPeriodoYRespuestas(String fechaInicio, String fechaFin) {
+    public List<Integer> getByPeriodoYRespuestas(String fechaInicio, String fechaFin) {
         LocalDate fechaInicioParsed = LocalDate.parse(fechaInicio);
         LocalDate fechaFinParsed = LocalDate.parse(fechaFin);
         gestorConsultarEncuesta.tomarSeleccionFechas(fechaInicioParsed, fechaFinParsed);
 
         List<Llamada> llamadas = llamadaRepository.findAll();
 
-        // Utiliza la lógica existente para filtrar llamadas por periodo
-        List<Llamada> llamadasEnPeriodo = gestorConsultarEncuesta.buscarLlamadasConEncuestaRespondida(llamadas);
-
-        // Mapea las llamadas a DTOs
-        return llamadasEnPeriodo
-                .stream()
-                .map(llamadaDtoPeriodoRespuestaMapper)
-                .toList();
+        return gestorConsultarEncuesta.buscarLlamadasConEncuestaRespondida(llamadas);
     }
 }

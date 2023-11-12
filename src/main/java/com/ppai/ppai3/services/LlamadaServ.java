@@ -7,5 +7,6 @@ import com.ppai.ppai3.entities.dtos.LlamadaPeriodoRespuesta;
 import java.util.List;
 
 public interface LlamadaServ extends Service<LlamadaDto, Integer> {
-    List<LlamadaPeriodoRespuesta> getByPeriodoYRespuestas(String fechaInicio, String fechaFin);
+    LlamadaPeriodoRespuesta getById(Integer id);
+    List<Integer> getByPeriodoYRespuestas(String fechaInicio, String fechaFin);
 }

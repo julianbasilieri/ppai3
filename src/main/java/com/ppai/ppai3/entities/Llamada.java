@@ -27,7 +27,6 @@ public class Llamada {
     @Column(name = "detalle_accion_requerida")
     private String detalleAccionRequerida;
     private float duracion;
-//    private Encuesta encuestaEnviada;
     @Column(name = "observacion_auditor")
     private String observacionAuditor;
     @OneToMany(mappedBy = "llamada")
@@ -59,7 +58,9 @@ public class Llamada {
         CambioEstado ultimoCambioEstado = Collections.max(cambiosEstado, Comparator.comparing(CambioEstado::getFechaHoraInicio));
         return ultimoCambioEstado.getEstado().getNombre();
     }
-
+    public float getDuracion() {
+        return duracion;
+    }
     public String getRespuestas() {
         return getRespuestasCliente().stream().map(RespuestaCliente::getDescipcionRta).toString();
 

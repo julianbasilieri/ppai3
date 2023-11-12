@@ -111,11 +111,20 @@
                 llamadas.forEach(llamada => {
                     const llamadaButton = document.createElement("button");
                     llamadaButton.className = "llamadaButton";
-                    llamadaButton.innerText = `ID de llamada: ${llamada.llamadaId}`;
-                    llamadaButton.onclick = () => mostrarDetallesLlamada(llamada);
+                    llamadaButton.innerText = `ID de llamada: ${llamada}`;
+                    llamadaButton.onclick = () => mostrarDetallesLlamada(obtenerDetallesLlamada(llamada));
                     llamadasContainer.appendChild(llamadaButton);
                 });
             }
+        }
+        function obtenerDetallesLlamada(llamadaId) {
+            const apiUrl = `http://localhost:8080/api/llamada/${llamadaId}`;
+            console.log(apiUrl)
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => mostrarDetallesLlamada(data))
+                .catch(error => console.error('Error:', error));
         }
 
         function mostrarDetallesLlamada(llamada) {
@@ -133,12 +142,12 @@
             // Limpiar tablas anteriores
             detalleTabla.innerHTML = "<tr><th>Cliente</th><th>Estado</th><th>Duración</th></tr>";
             encuestaTabla.innerHTML = "<tr><th>Encuesta</th><th>Pregunta</th><th>Respuesta</th></tr>";
-
+            console.log(llamada)
             // Agregar datos de la llamada a la tabla de detalles
             const detalleRow = detalleTabla.insertRow();
-            detalleRow.insertCell(0).innerText = llamada.cliente;
+            detalleRow.insertCell(0).innerText = llamada.cliente ? llamada.cliente : 'N/A';
             detalleRow.insertCell(1).innerText = llamada.estado;
-            detalleRow.insertCell(2).innerText = llamada.duracion + "segundos";
+            detalleRow.insertCell(2).innerText = llamada.duracion + " segundos";
 
             // Agregar datos de la encuesta a la tabla de encuesta
             llamada.respuestasCliente.forEach(respuesta => {
@@ -165,15 +174,6 @@
                         throw new Error('Network response was not ok');
                     }
                     return response.blob();
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(new Blob([blob]));
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'mi_archivo.csv';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
                 })
                 .catch(error => console.error('Error:', error));
         }

@@ -4,5 +4,4 @@ import java.util.List;
 
 public interface Service<T, W> {
     List<T> getAll();
-    T getById(W id);
 }

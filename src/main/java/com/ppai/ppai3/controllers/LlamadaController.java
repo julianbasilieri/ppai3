@@ -24,13 +24,13 @@ public class LlamadaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LlamadaDto> getById(@PathVariable("id") int id) {
-        LlamadaDto value = llamadaServ.getById(id);
+    public ResponseEntity<LlamadaPeriodoRespuesta> getById(@PathVariable("id") int id) {
+        LlamadaPeriodoRespuesta value = llamadaServ.getById(id);
         return ResponseEntity.ok(value);
     }
     @GetMapping("/selec")
-    public ResponseEntity<List<LlamadaPeriodoRespuesta>> getById(@RequestParam("fi") String fi, @RequestParam("ff") String ff) {
-        List<LlamadaPeriodoRespuesta> values = llamadaServ.getByPeriodoYRespuestas(fi, ff);
+    public ResponseEntity<List<Integer>> getById(@RequestParam("fi") String fi, @RequestParam("ff") String ff) {
+        List<Integer> values = llamadaServ.getByPeriodoYRespuestas(fi, ff);
         return ResponseEntity.ok(values);
     }
 }
