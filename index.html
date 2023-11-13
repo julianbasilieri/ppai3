@@ -10,7 +10,7 @@
 
 <body>
 
-    <button id="btnConsultar" class="botonConsultar" onclick="limpiarMensajes(); mostrarInputs()">Consultar
+    <button id="btnConsultar" class="botonConsultar" onclick="mostrarInputs()">Consultar
         Encuesta</button>
 
     <div id="fechaInputs" style="display: none;">
@@ -23,16 +23,17 @@
             <input type="date" id="fechaFin" required>
         </div>
         <div>
-            <button onclick="consultarApi()" class="botonConsultar">Consultar</button>
+            <button onclick="limpiar(); consultarApi()" class="botonConsultar">Consultar</button>
         </div>
-        <p id="mensajeError" class="mensajeError"></p>
     </div>
-
-    <div id="sinDatosMensaje" class="sinDatosMensaje">No hay datos disponibles para el período seleccionado.</div>
 
     <div id="llamadasContainer"></div>
 
     <div id="detallesLlamada">
+        <div id="fechasResultadoConsulta" style="display: none;">
+            <p id="fechaInicioResultado"></p>
+            <p id="fechaFinResultado"></p>
+        </div>
         <h2>Resultado de la consulta:</h2>
         <table id="detalleTabla">
             <tr>
@@ -53,25 +54,21 @@
 
         <div id="botones">
             <button id="csvButton" onclick="exportarCSV()" class="boton">CSV</button>
-            <button id="imprimirButton" onclick="imprimirDetalles()" disabled class="boton">Imprimir</button>
+            <button id="imprimirButton" disabled class="boton boton-disabled">Imprimir</button>
         </div>
     </div>
 
     <script>
-        function limpiarMensajes() {
-            document.getElementById("mensajeError").innerText = "";
-            document.getElementById("sinDatosMensaje").style.display = "none";
+        function limpiar() {
+            const llamadasContainer = document.getElementById("llamadasContainer").innerText = "";
         }
 
         function mostrarInputs() {
             document.getElementById("btnConsultar").style.display = "none";
             document.getElementById("fechaInputs").style.display = "flex";
-            document.getElementById("detallesLlamada").style.display = "none"; // Ocultar detalles si se vuelven a elegir fechas
-            document.getElementById("sinDatosMensaje").style.display = "none"; // Ocultar mensaje de sin datos
         }
 
         function consultarApi() {
-            limpiarMensajes();
             const fechaInicio = document.getElementById("fechaInicio").value;
             const fechaFin = document.getElementById("fechaFin").value;
 
@@ -80,34 +77,33 @@
 
                 fetch(apiUrl)
                     .then(response => response.json())
-                    .then(data => mostrarLlamadas(data))
+                    .then(data => {
+                        // Mostrar fechas debajo de "Resultado de la consulta"
+                        document.getElementById("fechasResultadoConsulta").style.display = "block";
+                        document.getElementById("fechaInicioResultado").innerText = `Fecha de Inicio: ${fechaInicio}`;
+                        document.getElementById("fechaFinResultado").innerText = `Fecha de Fin: ${fechaFin}`;
+
+                        mostrarLlamadas(data);
+                    })
                     .catch(error => console.error('Error:', error));
             }
         }
 
         function validarFechas(fechaInicio, fechaFin) {
             if (fechaInicio > fechaFin) {
-                document.getElementById("mensajeError").innerText = "La fecha de fin debe ser igual o posterior a la fecha de inicio.";
+                alert("La fecha de fin debe ser igual o posterior a la fecha de inicio.");
                 return false;
-            } else {
-                document.getElementById("mensajeError").innerText = "";
-                return true;
             }
+            return true;
         }
 
         function mostrarLlamadas(llamadas) {
             const llamadasContainer = document.getElementById("llamadasContainer");
-            const sinDatosMensaje = document.getElementById("sinDatosMensaje");
 
             if (llamadas.length === 0) {
                 // No hay datos para mostrar
-                sinDatosMensaje.style.display = "block";
-                llamadasContainer.innerHTML = ""; // Limpiar cualquier contenido anterior
-                document.getElementById("detallesLlamada").style.display = "none"; // Ocultar detalles
+                alert("No hay datos disponibles para el período seleccionado.")
             } else {
-                sinDatosMensaje.style.display = "none";
-                llamadasContainer.innerHTML = ""; // Limpiar cualquier contenido anterior
-
                 llamadas.forEach(llamada => {
                     const llamadaButton = document.createElement("button");
                     llamadaButton.className = "llamadaButton";
@@ -130,6 +126,7 @@
         function mostrarDetallesLlamada(llamada) {
             // Ocultar botones de llamada
             document.getElementById("llamadasContainer").style.display = "none";
+            document.getElementById("fechaInputs").style.display = "none";
 
             // Mostrar detalles de la llamada en formato de tabla
             const detalleTabla = document.getElementById("detalleTabla");
@@ -162,27 +159,20 @@
 
             // Agregar un margen superior constante a #fechaInputs
             document.getElementById("fechaInputs").style.marginTop = "20px";
-
-            // Habilitar el botón de imprimir
-            document.getElementById("imprimirButton").disabled = false;
         }
 
         function exportarCSV() {
             fetch('http://localhost:8080/api/exportar-csv')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Ocurrio un error inesperado');
                     }
+                    alert("Archivo generado en el escritorio");
                     return response.blob();
                 })
                 .catch(error => console.error('Error:', error));
         }
 
-
-        function imprimirDetalles() {
-            // Implementar lógica para imprimir detalles aquí
-            alert("Función de imprimir aún no implementada.");
-        }
     </script>
 
 </body>

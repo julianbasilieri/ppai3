@@ -1,18 +1,13 @@
 package com.ppai.ppai3.services.transformations.Llamada;
 
-import com.ppai.ppai3.entities.Encuesta;
 import com.ppai.ppai3.entities.Llamada;
-import com.ppai.ppai3.entities.Pregunta;
-import com.ppai.ppai3.entities.RespuestaCliente;
-import com.ppai.ppai3.entities.RespuestaPosible;
+
 import com.ppai.ppai3.entities.dtos.LlamadaPeriodoRespuesta;
-import com.ppai.ppai3.entities.dtos.RespuestaClienteDto;
 import com.ppai.ppai3.entities.dtos.RespuestaClientePeriodoRespuesta;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class LlamadaDtoPeriodoRespuestaMapper implements Function<Llamada, LlamadaPeriodoRespuesta> {

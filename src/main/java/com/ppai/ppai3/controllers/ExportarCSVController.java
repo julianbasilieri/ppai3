@@ -17,6 +17,6 @@ public class ExportarCSVController {
 
     @GetMapping
     public void exportarCSV() {
-        gestorConsultarEncuesta.tomarSeleccionFormaGeneracionEncuesta("csv");
+        gestorConsultarEncuesta.tomarSeleccionFormaGeneracionEncuesta("CSV");
     }
 }

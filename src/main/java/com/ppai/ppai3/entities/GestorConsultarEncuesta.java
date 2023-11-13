@@ -80,13 +80,11 @@ public class GestorConsultarEncuesta implements IAgregado {
         LlamadaPeriodoRespuesta llamadaPeriodoRespuesta = llamadaDtoPeriodoRespuestaMapper.apply(llamadaSeleccionada);
         String escritorio = System.getProperty("user.home") + "/Desktop/";
 
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss");
         String timestamp = dateFormat.format(new Date());
 
-
         // Concatenar el nombre del archivo CSV a la ruta del escritorio
-        String rutaArchivo = escritorio + "mi_archivo_" + timestamp + ".csv";
+        String rutaArchivo = escritorio + cliente + " " + timestamp + ".csv";
 
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(rutaArchivo))) {
             // Cabeceras del archivo CSV
@@ -103,10 +101,9 @@ public class GestorConsultarEncuesta implements IAgregado {
                 csvWriter.writeNext(datos);
             }
 
-            System.out.println("Archivo CSV generado exitosamente.");
+            System.out.println("Archivo " + formaGeneracion + " generado exitosamente.");
         } catch (IOException e) {
             e.printStackTrace();
-            // Manejar la excepción según sea necesario
         }
         finCU();
     }

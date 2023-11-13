@@ -63,6 +63,5 @@ public class Llamada {
     }
     public String getRespuestas() {
         return getRespuestasCliente().stream().map(RespuestaCliente::getDescipcionRta).toString();
-
     }
 }
